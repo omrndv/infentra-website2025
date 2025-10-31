@@ -8,8 +8,7 @@
                             <div class="auth-form-wrapper px-4 ps-5 py-5 pe-5">
                                 <a
                                     href="{{ route('frontend.landing') }}"
-                                    class="noble-ui-logo d-block mb-2"
-                                >
+                                    class="noble-ui-logo d-block mb-2">
                                     {{ $appSettings['title'] }}
                                 </a>
                                 <h5 class="text-muted fw-normal mb-4">
@@ -21,6 +20,9 @@
 
                                     <x-input.email name="email" value="{{ old('email') }}" />
                                     <x-input.password name="password" label="Password" />
+                                    <a href="{{ route('password.request') }}" class="d-block text-center mt-2">
+                                        Lupa Password?
+                                    </a>
 
                                     <x-button.primary class="w-100 mb-3" type="submit">
                                         Masuk
