@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Http\Controllers\Team;
+
+use App\Foundations\Controller;
+use App\Http\Requests\Team\SubmissionRequest;
+use App\Services\Team\SubmissionService;
+
+class SubmissionController extends Controller
+{
+    /**
+     * Create a new controller instance.
+     */
+    public function __construct(
+        private SubmissionService $service
+    ) {}
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        return view('pages.team.work', $this->service->index());
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(SubmissionRequest $request)
+    {
+        try {
+            $this->service->store($request->validated());
+
+            return back();
+        } catch (\Throwable $th) {
+            return $this->redirectError($th);
+        }
+    }
+}
