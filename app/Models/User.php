@@ -78,4 +78,13 @@ class User extends Authenticatable
     {
         return $this->hasOne(TeamLeader::class, 'user_id', 'id');
     }
+    public function setRememberToken($value) {}
+    public function getRememberToken()
+    {
+        return null;
+    }
+    public function getRememberTokenName()
+    {
+        return null;
+    }
 }

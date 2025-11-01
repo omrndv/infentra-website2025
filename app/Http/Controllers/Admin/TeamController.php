@@ -6,6 +6,7 @@ use App\DataTables\Admin\TeamDataTable;
 use App\Foundations\Controller;
 use App\Http\Requests\Admin\TeamRequest;
 use App\Services\Admin\TeamService;
+use App\Notifications\TeamApproved;
 
 class TeamController extends Controller
 {
@@ -46,7 +47,24 @@ class TeamController extends Controller
     public function update(TeamRequest $request, string $id)
     {
         try {
-            $this->service->update($request->validated(), $id);
+            $data = $request->validated();
+
+            // Update status team via service
+            $team = $this->service->update($data, $id);
+
+            // Jika status diubah menjadi APPROVE → kirim notifikasi email
+            if (isset($data['status']) && strtoupper($data['status']) === 'APPROVE') {
+                // Link grup WhatsApp (diambil dari input form admin)
+                $whatsappLink = $data['whatsapp_link'] ?? null;
+
+                if ($team && $team->leader && $team->leader->user) {
+                    $team->leader->user->notify(new TeamApproved($whatsappLink ?? 'https://chat.whatsapp.com/xxxxx'));
+                }
+
+                toast('Tim berhasil disetujui dan notifikasi email telah dikirim.', 'success');
+            } else {
+                toast('Status tim berhasil diperbarui.', 'info');
+            }
 
             return to_route('admin.team.index');
         } catch (\Throwable $th) {
@@ -61,7 +79,7 @@ class TeamController extends Controller
     {
         try {
             $this->service->destroy($id);
-
+            toast('Data tim berhasil dihapus.', 'success');
             return to_route('admin.team.index');
         } catch (\Throwable $th) {
             return $this->redirectError($th);
