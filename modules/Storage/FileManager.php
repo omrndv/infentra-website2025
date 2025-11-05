@@ -5,204 +5,94 @@ namespace Modules\Storage;
 use App\Enums\ReportLogType;
 use App\Enums\UploadFileType;
 use App\Traits\SystemLog;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 class FileManager
 {
     use SystemLog;
 
-    /**
-     * Set path root when unkown file.
-     *
-     * @var string
-     */
-    private static string $unkownPath = 'unkown';
+    private static string $unknownPath = 'unknown';
 
-    /**
-     * Set path for storage when upload file.
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    private function storageDisk(UploadFileType $type = UploadFileType::IMAGE)
+    private function storageFolder(UploadFileType $type = UploadFileType::IMAGE): string
     {
-        try {
-            $path = match ($type) {
-                UploadFileType::IMAGE => '' . UploadFileType::IMAGE->value . '/',
-                UploadFileType::FILE => '/' . UploadFileType::FILE->value . '/',
-                UploadFileType::SETTING => '/' . UploadFileType::SETTING->value . '/',
-                default => '/' . self::$unkownPath . '/',
-            };
+        $folder = match ($type) {
+            UploadFileType::IMAGE => 'photos',
+            UploadFileType::FILE  => 'payments',
+            UploadFileType::SETTING => 'settings',
+            default => self::$unknownPath,
+        };
 
-            if (!Storage::exists(explode('/', $path)[1])) {
-                Storage::disk('public')->copy('index.html', rtrim($path, '/') . '/index.html');
-            }
-
-            return $path;
-        } catch (\Throwable $th) {
-            $this->sendReportLog(ReportLogType::ERROR, $th->getMessage());
-            throw $th;
+        if (!Storage::disk('public')->exists($folder)) {
+            Storage::disk('public')->makeDirectory($folder);
         }
+
+        return $folder;
     }
 
-    /**
-     * Transform name file
-     *
-     * @param string $type
-     * @param string $file
-     *
-     * @return string
-     */
-    private function transformName($type, $file)
+    private function transformName(UploadFileType $type, string $file): string
     {
-        try {
-            $baseUrl = request()->getSchemeAndHttpHost() . '/storage';
-            return match ($type) {
-                UploadFileType::IMAGE => $baseUrl . '/' . UploadFileType::IMAGE->value . '/' . $file,
-                UploadFileType::FILE => $baseUrl . '/' . UploadFileType::FILE->value . '/' . $file,
-                UploadFileType::SETTING => $baseUrl . '/' . UploadFileType::SETTING->value . '/' . $file,
-                default => $baseUrl . '/' . self::$unkownPath . '/' . $file,
-            };
-        } catch (\Throwable $th) {
-            $this->sendReportLog(ReportLogType::ERROR, $th->getMessage());
-            throw $th;
-        }
+        $baseUrl = asset('storage');
+        $folder = match ($type) {
+            UploadFileType::IMAGE   => 'photos',
+            UploadFileType::FILE    => 'payments',
+            UploadFileType::SETTING => 'settings',
+            default                 => self::$unknownPath,
+        };
+
+        return $baseUrl . '/' . $folder . '/' . $file;
     }
 
-    /**
-     * Parse image name
-     *
-     * @param string $file
-     *
-     * @return string
-     */
-    private function parseImage($file)
+    private function parseImage(string $file): string
     {
-        try {
-            $parsedUrl = parse_url($file);
-            return basename($parsedUrl['path'] ?? '');
-        } catch (\Throwable $th) {
-            $this->sendReportLog(ReportLogType::ERROR, $th->getMessage());
-            throw $th;
-        }
+        return basename(parse_url($file, PHP_URL_PATH) ?? '');
     }
 
-    /**
-     * Save file in storage app
-     *
-     * @param UploadFileType $type
-     * @param UploadedFile $file
-     *
-     * @return string
-     */
-    private function putFile(UploadFileType $type, $file)
+    private function putFile(UploadFileType $type, UploadedFile $file): string
     {
-        try {
-            $user = auth('web')->user();
-            $clientCode = $user ? $user->id . '_' . $user->created_at->format('dmY') : rand(1, 999) . '_' . date('His');
-            $fileName = preg_replace('/\s+/', '_', uniqid() . '_' . date('dmY') . '_' . $clientCode . '.' . $file->getClientOriginalExtension());
+        $user = auth('web')->user();
+        $clientCode = $user
+            ? $user->id . '_' . $user->created_at->format('dmY')
+            : rand(1, 999) . '_' . date('His');
 
-            if ($this->checkFile($type, $fileName, true)) {
-                return $this->putFile($type, $file);
-            }
+        $fileName = uniqid() . '_' . date('dmY') . '_' . $clientCode . '.' . $file->getClientOriginalExtension();
+        $folder = $this->storageFolder($type);
 
-            $file->storeAs($this->storageDisk($type), $fileName);
+        $file->storeAs($folder, $fileName, 'public');
 
-            return $this->transformName($type, $fileName);
-        } catch (\Throwable $th) {
-            $this->sendReportLog(ReportLogType::ERROR, $th->getMessage());
-            throw $th;
-        }
+        return $this->transformName($type, $fileName);
     }
 
-    /**
-     * Delete file in storage app
-     *
-     * @param UploadFileType $type
-     * @param string $file
-     *
-     * @return bool
-     */
-    public function deleteFile(UploadFileType $type, $file)
+    public function saveSingleFile(UploadFileType $type, ?UploadedFile $file): ?string
     {
-        try {
-            if (!$this->checkFile($type, $file)) return false;
+        if (is_null($file)) return null;
 
-            $parsedFile = $this->parseImage($file);
-            Storage::delete($this->storageDisk($type) . $parsedFile);
-
-            return true;
-        } catch (\Throwable $th) {
-            $this->sendReportLog(ReportLogType::ERROR, $th->getMessage());
-            throw $th;
-        }
+        return $this->putFile($type, $file);
     }
 
-    /**
-     * Check file in storage app
-     *
-     * @param UploadFileType $type
-     * @param string $file
-     * @param bool $save
-     *
-     * @return bool
-     */
-    public function checkFile(UploadFileType $type, $file, $save = false)
+    public function updateSingleFile(UploadFileType $type, $file, ?string $oldFile): ?string
     {
-        try {
-            $parsedFile = $save ? $file : $this->parseImage($file);
-            return Storage::exists($this->storageDisk($type) . $parsedFile);
-        } catch (\Throwable $th) {
-            $this->sendReportLog(ReportLogType::ERROR, $th->getMessage());
-            throw $th;
+        if (!$file instanceof UploadedFile) {
+            return $file ?? $oldFile;
         }
+
+        if (!empty($oldFile)) {
+            $this->deleteFile($type, $oldFile);
+        }
+
+        return $this->putFile($type, $file);
     }
 
-    /**
-     * Save single file to storage app
-     *
-     * @param UploadFileType $type
-     * @param UploadedFile $file
-     *
-     * @return string|null
-     */
-    public function saveSingleFile(UploadFileType $type, $file): string|null
+    public function deleteFile(UploadFileType $type, string $file): bool
     {
-        try {
-            if (is_null($file)) return null;
+        $parsedFile = $this->parseImage($file);
+        $folder = $this->storageFolder($type);
 
-            return $this->putFile($type, $file);
-        } catch (\Throwable $th) {
-            $this->sendReportLog(ReportLogType::ERROR, $th->getMessage());
-            throw $th;
+        if (!Storage::disk('public')->exists($folder . '/' . $parsedFile)) {
+            return false;
         }
-    }
 
-    /**
-     * Update old file with the new one
-     *
-     * @param UploadFileType $type
-     * @param UploadedFile $file
-     * @param string $old_file
-     *
-     * @return string|null
-     */
-    public function updateSingleFile(UploadFileType $type, $file, $old_file): string|null
-    {
-        try {
-            if (is_null($file)) return null;
-
-            if (!$this->checkFile($type, $old_file)) {
-                return $this->putFile($type, $file);
-            }
-
-            $this->deleteFile($type, $old_file);
-
-            return $this->updateSingleFile($type, $file, $old_file);
-        } catch (\Throwable $th) {
-            $this->sendReportLog(ReportLogType::ERROR, $th->getMessage());
-            throw $th;
-        }
+        Storage::disk('public')->delete($folder . '/' . $parsedFile);
+        return true;
     }
 }

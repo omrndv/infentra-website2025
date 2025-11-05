@@ -13,9 +13,9 @@ class TeamLeaderObserver
      */
     public function creating(TeamLeader $teamLeader): void
     {
-        $teamLeader->card = $teamLeader->card
-            ? File::saveSingleFile(UploadFileType::IMAGE, $teamLeader->card)
-            : null;
+        if ($teamLeader->card instanceof \Illuminate\Http\UploadedFile) {
+            $teamLeader->card = File::saveSingleFile(UploadFileType::IMAGE, $teamLeader->card);
+        }
     }
 
     /**
@@ -23,17 +23,22 @@ class TeamLeaderObserver
      */
     public function updating(TeamLeader $teamLeader): void
     {
+        // Hanya proses jika field 'card' berubah
         if ($teamLeader->isDirty('card')) {
-            $oldCard = $teamLeader->getOriginal('card', null);
+            $oldCard = $teamLeader->getOriginal('card');
 
-            if ($oldCard == null) {
-                $teamLeader->card = $teamLeader->card
-                    ? File::saveSingleFile(UploadFileType::IMAGE, $teamLeader->card)
-                    : null;
-            } else {
-                $teamLeader->card = $teamLeader->card
-                    ? File::updateSingleFile(UploadFileType::IMAGE, $teamLeader->card, $oldCard)
-                    : File::deleteFile(UploadFileType::IMAGE, $oldCard);
+            // Jika ada file baru
+            if ($teamLeader->card instanceof \Illuminate\Http\UploadedFile) {
+                $teamLeader->card = File::updateSingleFile(
+                    UploadFileType::IMAGE,
+                    $teamLeader->card,
+                    $oldCard
+                );
+            }
+            // Jika user mengosongkan field card, hapus file lama
+            elseif (empty($teamLeader->card) && $oldCard) {
+                File::deleteFile(UploadFileType::IMAGE, $oldCard);
+                $teamLeader->card = null;
             }
         }
     }
@@ -43,8 +48,8 @@ class TeamLeaderObserver
      */
     public function deleting(TeamLeader $teamLeader): void
     {
-        $teamLeader->card
-            ? File::deleteFile(UploadFileType::IMAGE, $teamLeader->card)
-            : null;
+        if ($teamLeader->card) {
+            File::deleteFile(UploadFileType::IMAGE, $teamLeader->card);
+        }
     }
 }

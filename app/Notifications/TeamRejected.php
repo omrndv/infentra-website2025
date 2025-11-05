@@ -3,19 +3,14 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class TeamRejected extends Notification
 {
     use Queueable;
 
-    protected string $reason;
-
-    public function __construct(string $reason)
-    {
-        $this->reason = $reason;
-    }
+    public function __construct(private string $reason) {}
 
     public function via(object $notifiable): array
     {
@@ -24,14 +19,17 @@ class TeamRejected extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
+        $team = $notifiable->leader?->team;
+        $url = $team ? url('/reupload/' . $team->id) : url('/');
+
         return (new MailMessage)
             ->subject('Tim Anda Tidak Disetujui - InvFest x ISF 9.0')
             ->greeting('Halo, ' . ($notifiable->name ?? 'Peserta') . '!')
             ->line('Maaf, tim kamu belum memenuhi persyaratan yang ada.')
             ->line('**Alasan Penolakan:**')
             ->line('➡️ ' . $this->reason)
-            ->line('Jangan khawatir, kamu masih bisa daftar ulang melalui tautan di bawah.')
-            ->action('Daftar Ulang', url('/register'))
-            ->line('Pastikan tim kamu memenuhi semua syarat agar bisa diterima. Semangat!');
+            ->line('Silakan memperbarui dokumen melalui tautan di bawah ini.')
+            ->action('Upload Ulang Dokumen', $url)
+            ->line('Pastikan seluruh data sudah benar sebelum dikirim ulang.');
     }
 }

@@ -8,9 +8,17 @@ use App\Http\Controllers\Auth\TeamController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\TeamController as AdminTeamController;
-
+use App\Http\Controllers\Frontend\ReuploadController;
+use Illuminate\Support\Facades\Auth;
 // URL::forceScheme('https'); // aktifkan kalau pakai HTTPS
 
+
+Route::prefix('team')->name('frontend.team.')->middleware(['auth', 'role:team'])->group(function () {
+    Route::get('dashboard', function () {
+        $user = Auth::user();
+        return view('pages.team.dashboard', compact('user'));
+    })->name('dashboard');
+});
 /*
 |--------------------------------------------------------------------------
 | VERIFIKASI EMAIL / OTP
@@ -63,6 +71,12 @@ Route::controller(Frontend\CompetitionController::class)
 */
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('team', AdminTeamController::class);
+});
+
+
+Route::prefix('reupload')->name('reupload.')->group(function () {
+    Route::get('/{team}', [ReuploadController::class, 'index'])->name('index');
+    Route::post('/{team}', [ReuploadController::class, 'store'])->name('store');
 });
 
 /*
