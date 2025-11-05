@@ -5,15 +5,23 @@
             class="img-fluid rounded-2"
             alt="{{ $competition->name }}"
             style="width: 100%"
-            loading="lazy"
-        />
+            loading="lazy" />
         <div class="information">
             <h1 class="text-primary">{{ $competition?->name }}</h1>
             <p class="text-muted m-0">Biaya Pendaftaran: {{ $competition?->registration_fee_rupiah }}</p>
             <p class="text-muted m-0">Level: {{ $competition?->level?->display_as }}</p>
-            <a href="{{ route('register') }}" class="btn btn-primary mt-3 w-100">
-                Daftar Kompetisi
+
+            @auth
+            {{-- Jika user sudah login --}}
+            <a href="{{ route('frontend.team.dashboard') }}" class="btn btn-primary mt-3 w-100">
+                Daftar
             </a>
+            @else
+            {{-- Jika user belum login --}}
+            <a href="{{ route('register') }}" class="btn btn-primary mt-3 w-100">
+                Daftar
+            </a>
+            @endauth
             <a href="{{ $competition->poster ?? '#' }}" class="btn btn-secondary mt-3 w-100" target="_blank">
                 Guidebook
             </a>

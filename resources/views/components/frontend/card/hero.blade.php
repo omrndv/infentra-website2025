@@ -11,19 +11,29 @@
                         <i class="fas fa-arrow-down"></i>
                         Detail
                     </a>
+                    @auth
+                    {{-- Jika user sudah login --}}
+                    <a href="{{ route('frontend.team.dashboard') }}"
+                        class="btn btn-sm btn-rounded border border-1 border-white text-white">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                    @else
+                    {{-- Jika user belum login --}}
                     <a href="{{ route('register') }}"
                         class="btn btn-sm btn-rounded border border-1 border-white text-white">
                         <i class="fas fa-user-plus"></i>
                         Daftar
                     </a>
+                    @endauth
+
                 </div>
             </div>
             <img
                 src="{{ $appSettings['mascot'] ?? '#' }}"
                 alt="mascot"
                 class="mascot-image"
-                loading="lazy"
-            />
+                loading="lazy" />
         </div>
     </div>
 </div>
