@@ -1,6 +1,6 @@
 <x-layouts.admin title="{{ $team->name }}">
     @pushOnce('plugin-styles')
-        <link rel="stylesheet" href="{{ asset('admin/assets/plugins/lightbox/css/lightbox.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/plugins/lightbox/css/lightbox.css') }}">
     @endPushOnce
 
     <div class="d-flex align-items-center justify-content-between">
@@ -55,37 +55,35 @@
                                 <td>
                                     <ul>
                                         @foreach ($team?->members as $member)
-                                            <li>
-                                                {{ $member->name ?? 'Tidak Ada' }}
-                                                <a
-                                                    href="{{ $member->card ?? '#' }}"
-                                                    data-lightbox="image-1"
-                                                    data-title="Kartu Identitas {{ $member->name }}"
-                                                >
-                                                    Kartu Pelajar / Mahasiswa
-                                                </a>
-                                            </li>
+                                        <li>
+                                            {{ $member->name ?? 'Tidak Ada' }}
+                                            <a
+                                                href="{{ $member->card ?? '#' }}"
+                                                data-lightbox="image-1"
+                                                data-title="Kartu Identitas {{ $member->name }}">
+                                                Kartu Pelajar / Mahasiswa
+                                            </a>
+                                        </li>
                                         @endforeach
                                     </ul>
                                 </td>
                             </tr>
                             @if ($team->competition->level->level == 'umum' && $team->companion?->id != null)
-                                <tr>
-                                    <th>Nama Pembimbing</th>
-                                    <td>{{ $team?->companion?->name }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Kartu Identitas Pembmbing</th>
-                                    <td>
-                                        <a
-                                            href="{{ $team->companion->card ?? '#' }}"
-                                            data-lightbox="image-1"
-                                            data-title="Kartu Identitas {{ $team?->companion?->name }}"
-                                        >
-                                            Kartu Identitas Pembimbing
-                                        </a>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <th>Nama Pembimbing</th>
+                                <td>{{ $team?->companion?->name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Kartu Identitas Pembmbing</th>
+                                <td>
+                                    <a
+                                        href="{{ $team->companion->card ?? '#' }}"
+                                        data-lightbox="image-1"
+                                        data-title="Kartu Identitas {{ $team?->companion?->name }}">
+                                        Kartu Identitas Pembimbing
+                                    </a>
+                                </td>
+                            </tr>
                             @endif
                             <tr>
                                 <th>Metode Pembayaran</th>
@@ -102,15 +100,13 @@
                                     <a
                                         href="{{ $team?->payment?->proof ?? '#' }}"
                                         data-lightbox="image-1"
-                                        data-title="Bukti Pembayaran {{ $team->name }}"
-                                    >
+                                        data-title="Bukti Pembayaran {{ $team->name }}">
                                         <img
                                             src="{{ $team?->payment?->proof ?? '#' }}"
                                             alt="Bukti Pembayaran"
                                             class="img-table-lightbox"
                                             width="100"
-                                            loading="lazy"
-                                        />
+                                            loading="lazy" />
                                     </a>
                                 </td>
                             </tr>
@@ -118,11 +114,11 @@
                                 <th>Status</th>
                                 <td>
                                     @if ($team?->payment?->status == 'reject')
-                                        <span class="badge bg-danger">Ditolak</span>
+                                    <span class="badge bg-danger">Ditolak</span>
                                     @elseif($team?->payment?->status == 'approve')
-                                        <span class="badge bg-success">Diterima</span>
+                                    <span class="badge bg-success">Diterima</span>
                                     @else
-                                        <span class="badge bg-warning">Pending</span>
+                                    <span class="badge bg-warning">Pending</span>
                                     @endif
                                 </td>
                             </tr>
@@ -131,43 +127,85 @@
                 </div>
                 <x-slot name="footer">
                     @if ($team?->payment !== null && $team?->payment?->status == 'pending')
-                        <span style="color: red;">* Pastikan bukti pembayaran sudah tervalidasi sebelum melakukan aksi</span>
-                        <div class="d-flex justify-content-between mt-4">
-                            <form action="{{ route('admin.team.update', $team->id) }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="status" value="{{ $status::APPROVE }}">
-                                <input type="hidden" name="email" value="{{ $team?->leader?->user?->email }}">
-                                <input type="hidden" name="whatsapp_link"
-                                    value="{{ $team?->competition?->whatsapp_group }}">
-                                <button class="btn btn-success btn-sm"
-                                    onclick="return confirm('Apakah anda yakin ingin menerima tim ini?')">Terima</button>
-                            </form>
-                            <form action="{{ route('admin.team.update', $team->id) }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="status" value="{{ $status::REJECT }}">
-                                <input type="hidden" name="email" value="{{ $team?->leader?->user?->email }}">
-                                <button class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Apakah anda yakin ingin menolak tim ini?')">Tolak</button>
-                            </form>
+                    <span style="color: red;">* Pastikan bukti pembayaran sudah tervalidasi sebelum melakukan aksi</span>
+                    <div class="d-flex justify-content-between mt-4">
+                        {{-- Tombol TERIMA --}}
+                        <form action="{{ route('admin.team.update', $team->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <input type="hidden" name="status" value="{{ $status::APPROVE }}">
+                            <input type="hidden" name="email" value="{{ $team?->leader?->user?->email }}">
+                            <input type="hidden" name="whatsapp_link" value="{{ $team?->competition?->whatsapp_group }}">
+                            <button class="btn btn-success btn-sm"
+                                onclick="return confirm('Apakah anda yakin ingin menerima tim ini?')">Terima</button>
+                        </form>
+
+                        {{-- Tombol TOLAK pakai modal --}}
+                        <form id="rejectForm" action="{{ route('admin.team.update', $team->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <input type="hidden" name="status" value="{{ $status::REJECT }}">
+                            <input type="hidden" name="email" value="{{ $team?->leader?->user?->email }}">
+                            <input type="hidden" id="reasonInput" name="reason">
+
+                            <!-- Tombol Buka Modal -->
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                                Tolak
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Modal Bootstrap -->
+                    <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="rejectModalLabel">Tolak Tim {{ $team->name }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="reasonTextarea" class="form-label">Alasan Penolakan</label>
+                                    <textarea id="reasonTextarea" class="form-control" rows="4" placeholder="Tuliskan alasan penolakan..." required></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button type="button" class="btn btn-danger" onclick="submitRejectForm()">Kirim Penolakan</button>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+
+                    @push('custom-scripts')
+                    <script>
+                        function submitRejectForm() {
+                            const reason = document.getElementById('reasonTextarea').value.trim();
+                            if (reason === "") {
+                                alert("Harap isi alasan penolakan!");
+                                return;
+                            }
+                            document.getElementById('reasonInput').value = reason;
+                            document.getElementById('rejectForm').submit();
+                        }
+                    </script>
+                    @endpush
+
                     @else
-                        <a href="{{ route('admin.team.index') }}" class="btn btn-danger btn-sm">Kembali</a>
+                    <a href="{{ route('admin.team.index') }}" class="btn btn-danger btn-sm">Kembali</a>
                     @endif
                 </x-slot>
+
             </x-admin.card>
         </div>
     </div>
 
     @pushOnce('plugin-scripts')
-        <script src="{{ asset('admin/assets/plugins/lightbox/js/lightbox.js') }}"></script>
+    <script src="{{ asset('admin/assets/plugins/lightbox/js/lightbox.js') }}"></script>
 
-        <script>
-            lightbox.option({
-                'resizeDuration': 200,
-                'wrapAround': true
-            })
-        </script>
+    <script>
+        lightbox.option({
+            'resizeDuration': 200,
+            'wrapAround': true
+        })
+    </script>
     @endPushOnce
 </x-layouts.admin>

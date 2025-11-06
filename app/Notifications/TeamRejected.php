@@ -3,54 +3,33 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\MailMessage;
 
-class TeamRejected extends Notification implements ShouldQueue
+class TeamRejected extends Notification
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(private string $reason) {}
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
     public function via(object $notifiable): array
     {
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-                    ->subject('Team anda tidak disetujui.')
-                    ->line('Maaf, team kamu belum memenuhi persyaratan yang ada.')
-                    ->line('Jangan khawatir, team kamu masih bisa daftar ulang pada tautan dibawah.')
-                    ->action('Daftar Ulang', url('/register'))
-                    ->line('Pastikan team kamu sudah membaca persyaratan yang ada, agar team kamu disetujui. Semangat!!');
-    }
+        $team = $notifiable->leader?->team;
+        $url = $team ? url('/reupload/' . $team->id) : url('/');
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
-    {
-        return [
-            //
-        ];
+        return (new MailMessage)
+            ->subject('Tim Anda Tidak Disetujui - InvFest x ISF 9.0')
+            ->greeting('Halo, ' . ($notifiable->name ?? 'Peserta') . '!')
+            ->line('Maaf, tim kamu belum memenuhi persyaratan yang ada.')
+            ->line('**Alasan Penolakan:**')
+            ->line('➡️ ' . $this->reason)
+            ->line('Silakan memperbarui dokumen melalui tautan di bawah ini.')
+            ->action('Upload Ulang Dokumen', $url)
+            ->line('Pastikan seluruh data sudah benar sebelum dikirim ulang.');
     }
 }

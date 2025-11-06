@@ -10,17 +10,11 @@ class VerificationController extends Controller
 {
     public function __construct(private VerificationService $service) {}
 
-    /**
-     * Tampilkan halaman input OTP / verifikasi email
-     */
     public function index()
     {
         return view('pages.auth.verification-email');
     }
 
-    /**
-     * Proses verifikasi OTP dari form
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -30,11 +24,9 @@ class VerificationController extends Controller
         $result = $this->service->store($request->only('otp'));
 
         if ($result) {
-            // redirect ke halaman team member jika berhasil
-            return redirect()->route('team-members.index');
+            return redirect()->route('team-members')->with('success', 'Email berhasil diverifikasi!');
         }
 
-        // jika gagal, kembali ke halaman OTP
-        return back()->withInput();
+        return back()->withInput()->withErrors(['otp' => 'Kode OTP salah atau tidak valid.']);
     }
 }

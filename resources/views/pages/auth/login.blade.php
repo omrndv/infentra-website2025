@@ -20,6 +20,9 @@
 
                                     <x-input.email name="email" value="{{ old('email') }}" />
                                     <x-input.password name="password" label="Password" />
+                                    <a href="{{ route('password.request') }}" class="d-block text-center mt-2">
+                                        Lupa Password?
+                                    </a>
 
                                     <x-button.primary class="w-100 mb-3 mt-4" type="submit">
                                         Masuk

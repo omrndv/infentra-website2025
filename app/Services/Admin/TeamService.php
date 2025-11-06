@@ -10,9 +10,6 @@ use App\Notifications\TeamRejected;
 
 class TeamService extends Service
 {
-    /**
-     * Model contract constructor.
-     */
     public function __construct(
         private Models\UserInterface $userInterface,
         private Models\TeamInterface $teamInterface,
@@ -21,29 +18,22 @@ class TeamService extends Service
         private Models\CompetitionInterface $competitionInterface,
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return array
-     */
     public function index(): array
     {
         $competitions = $this->competitionInterface->all(['id', 'name']);
-
         return compact('competitions');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     *
-     * @return array
-     */
-    public function show(string $id): array
+    public function show(string $id): ?array
     {
         $status = PaymentStatus::class;
-        $team = $this->teamInterface->findById($id, ['id', 'competition_id', 'name', 'institution'], [
+
+        $team = $this->teamInterface->findById($id, [
+            'id',
+            'competition_id',
+            'name',
+            'institution'
+        ], [
             'competition:id,level_id,whatsapp_group',
             'competition.level:id,level',
             'payment:id,team_id,method_id,proof,status',
@@ -54,23 +44,19 @@ class TeamService extends Service
             'companion:id,team_id,name,card'
         ]);
 
+        if (!$team) {
+            return null; // biar Controller bisa abort(404)
+        }
+
         return compact('team', 'status');
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param array $request
-     * @param string $id
-     *
-     * @return void
-     */
     public function update(array $request, string $id): void
     {
         try {
             $payment = $this->paymentInterface->findByCustomId([['team_id', '=', $id]], ['id', 'team_id']);
             if (is_null($payment)) {
-                toast('ID tim tidak ditemukan pada system atau belum melakukan pembayaran', 'error');
+                toast('ID tim tidak ditemukan pada sistem atau belum melakukan pembayaran', 'error');
                 return;
             }
 
@@ -78,40 +64,30 @@ class TeamService extends Service
             $user = $this->userInterface->findByCustomId([['email', '=', $request['email']]]);
 
             if ($request['status'] == PaymentStatus::APPROVE->value) {
-                $user->notify(new TeamApproved($request['whatsapp_link']));
+                $user?->notify(new \App\Notifications\TeamApproved($request['whatsapp_link'] ?? 'https://chat.whatsapp.com/xxxxx'));
+                toast('Tim disetujui dan email telah dikirim', 'success');
             } else {
-                $user->notify(new TeamRejected());
+                $reason = $request['reason'] ?? 'Tidak memenuhi syarat pendaftaran.';
+                $user?->notify(new \App\Notifications\TeamRejected($reason));
+                toast('Tim ditolak dan email alasan telah dikirim', 'error');
             }
-
-            toast('Status tim berhasil diubah', 'success');
         } catch (\Throwable $th) {
             toast('Status tim gagal diubah', 'error');
             throw $th;
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param string $id
-     *
-     * @return void
-     */
+
     public function destroy(string $id): void
     {
-        try {
-            $teamLeader = $this->teamLeaderInterface->findByCustomId([['team_id', '=', $id]], ['id', 'team_id', 'user_id']);
+        $teamLeader = $this->teamLeaderInterface->findByCustomId([['team_id', '=', $id]], ['id', 'team_id', 'user_id']);
 
-            $this->teamInterface->deleteById($id);
+        $this->teamInterface->deleteById($id);
 
-            if (isset($teamLeader) && !is_null($teamLeader?->user_id ?? null)) {
-                $this->userInterface->deleteById($teamLeader->user_id);
-            }
-
-            toast('Tim berhasil dihapus', 'success');
-        } catch (\Throwable $th) {
-            toast('Tim gagal dihapus', 'error');
-            throw $th;
+        if (isset($teamLeader) && $teamLeader?->user_id) {
+            $this->userInterface->deleteById($teamLeader->user_id);
         }
+
+        toast('Tim berhasil dihapus', 'success');
     }
 }

@@ -27,8 +27,8 @@ class TeamRequest extends FormRequest
         return [
             'status' => ['required', Rule::enum(PaymentStatus::class)->only([PaymentStatus::APPROVE, PaymentStatus::REJECT])],
             'email' => ['required', 'email', Rule::exists(User::class, 'email')],
-            'whatsapp_link' => ['nullable', 'string', Rule::requiredIf(fn () => request()->input('status') === PaymentStatus::APPROVE->value)]
+            'whatsapp_link' => ['nullable', 'string', Rule::requiredIf(fn() => request()->input('status') === PaymentStatus::APPROVE->value)],
+            'reason' => 'nullable|string|max:500',
         ];
     }
-
 }

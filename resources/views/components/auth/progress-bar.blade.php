@@ -8,7 +8,7 @@ $steps = [
 @endphp
 
 <div class="steps">
-    <progress id="progress" value={{ $progress }} max=100></progress>
+    <progress id="progress" value="{{ $progress }}" max="100"></progress>
 
     @foreach ($steps as $key => $step)
     <div class="step-item">
