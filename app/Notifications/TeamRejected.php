@@ -23,7 +23,7 @@ class TeamRejected extends Notification
         $url = $team ? url('/reupload/' . $team->id) : url('/');
 
         return (new MailMessage)
-            ->subject('Tim Anda Tidak Disetujui - InvFest x ISF 9.0')
+            ->subject('Tim Anda Tidak Disetujui - Infentra 2025')
             ->greeting('Halo, ' . ($notifiable->name ?? 'Peserta') . '!')
             ->line('Maaf, tim kamu belum memenuhi persyaratan yang ada.')
             ->line('**Alasan Penolakan:**')
