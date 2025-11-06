@@ -89,6 +89,7 @@
         <script src="{{ asset('js/jquery.min.js') }}" nonce="{{ csp_nonce() }}"></script>
         <script src="{{ asset('frontend/js/app.js') }}" nonce="{{ csp_nonce() }}"></script>
         <script src="{{ asset('js/warning.js') }}" nonce="{{ csp_nonce() }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
         @stack('plugin-scripts')
 

@@ -18,19 +18,20 @@
     height: 3vw;
     border-radius: 50%;
     border: none;
-    background-color: var(--primary);
+    background-color: black;
     color: #fff;
     transition: .4s;
 }
 
 .step-text {
     margin-top: 1vh;
+    color: white;
 }
 
 .step-button[aria-expanded="true"] {
     width: 3vw;
     height: 3vw;
-    background-color: var(--secondary);
+    background-color: #076fb8;
     color: #fff;
 }
 
@@ -50,12 +51,12 @@
 }
 
 #progress::-webkit-progress-value {
-    background-color: var(--secondary);
+    background-color: #076fb8;
     transition: .5s ease;
 }
 
 #progress::-webkit-progress-bar {
-    background-color: var(--primary);
+    background-color: black;
 }
 
 /* Media Queries for Responsiveness */

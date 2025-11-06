@@ -1,4 +1,4 @@
-<footer class="footer container-fluid bg-white mt-5">
+<footer class="footer container-fluid mt-5" style="background-color: black; color: white">
     <div class="container">
         <div class="footer_menu row gap-5">
             <div class="footer_menu_list col-12 col-md-12 col-lg-4">
@@ -30,7 +30,7 @@
                 <h6 class="fw-bold pb-2">Navigasi</h6>
                 <ul class="navbar-nav">
                     <li>
-                        <a href="{{ route('frontend.landing') }}" class="nav-link">
+                        <a href="{{ route('frontend.landing') }}" class="nav-link ">
                             Home
                         </a>
                     </li>
@@ -47,7 +47,7 @@
                 </ul>
             </div>
             <div class="footer_menu_list col-12 col-md-12 col-lg-3">
-                <h6 class="fw-bold pb-2">Kompetiti</h6>
+                <h6 class="fw-bold pb-2">Kompetisi</h6>
                 <ul class="navbar-nav">
                     @foreach ($latestCompetition as $competition)
                         <li>

@@ -1,18 +1,18 @@
-<div class="container card-container-custom">
-    <div class="d-flex flex-center">
-        @foreach ($partners as $partner)
-            <div
-                data-aos="fade-up"
-                data-aos-delay="{{ ($loop->iteration ^ 2) * 50 }}"
-                class="card card-custom"
-            >
-                <img
-                    src="{{ $partner->logo ?? '#' }}"
-                    class="card-img card-img-custom"
-                    alt="{{ $partner->name }}"
-                    loading="lazy"
-                />
+<div class="container card-container-custom overflow-hidden">
+    <div class="marquee-wrapper" onmouseover="this.querySelector('marquee').stop();" onmouseout="this.querySelector('marquee').start();">
+        <marquee behavior="scroll" direction="left" scrollamount="10" class="marquee-content">
+            <div class="d-flex">
+                @foreach ($partners as $partner)
+                <div class="d-inline-block mx-4">
+                    <img
+                        src="{{ $partner->logo ?? '#' }}"
+                        class="partner-logo"
+                        alt="{{ $partner->name }}"
+                        loading="lazy"
+                        style="max-width: 150px; height: auto;" />
+                </div>
+                @endforeach
             </div>
-        @endforeach
+        </marquee>
     </div>
 </div>

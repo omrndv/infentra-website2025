@@ -17,7 +17,7 @@ class SettingSeeder extends Seeder
             $settings = [
                 [
                     'key' => 'title',
-                    'value' => 'INVFEST X IST 9.0',
+                    'value' => 'INFENTRA 2025',
                 ],
                 [
                     'key' => 'slogan',

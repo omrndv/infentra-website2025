@@ -1,25 +1,27 @@
-@foreach ($sponsorsTiers as $tier)
-    @if (count($tier->sponsorships) === 0)
-        @continue
-    @else
-        <div class="container card-container-custom">
-            <h2 class="text-white text-center">{{ Str::ucfirst($tier->tier) }}</h2>
-            <div class="d-flex flex-center mt-3 items-center">
-                @foreach ($tier->sponsorships as $sponsor)
-                    <div
-                        data-aos="fade-up"
-                        data-aos-delay="{{ ($loop->iteration ^ 2) * 50 }}"
-                        class="card card-custom"
-                    >
-                        <img
-                            src="{{ $sponsor->logo ?? '#' }}"
-                            class="card-img card-img-custom"
-                            alt="{{ $sponsor->name }}"
-                            loading="lazy"
-                        />
-                    </div>
-                @endforeach
+<div class="container card-container-custom text-center my-5">
+    <div class="marquee-wrapper" onmouseover="this.querySelector('marquee').stop();" onmouseout="this.querySelector('marquee').start();">
+        <marquee behavior="scroll" direction="left" scrollamount="10" class="marquee-content">
+            @foreach ($sponsorsTiers as $tier)
+            @foreach ($tier->sponsorships as $sponsor)
+            @php
+            $sizeClass = match (strtolower($tier->tier)) {
+            'platinum' => 'sponsor-xl',
+            'gold' => 'sponsor-m',
+            'silver' => 'sponsor-l',
+            'bronze' => 'sponsor-l',
+            default => 'sponsor-m'
+            };
+            @endphp
+
+            <div class="d-inline-block mx-4">
+                <img
+                    src="{{ $sponsor->logo ?? '#' }}"
+                    alt="{{ $sponsor->name }}"
+                    class="sponsor-logo {{ $sizeClass }}"
+                    loading="lazy" />
             </div>
-        </div>
-    @endif
-@endforeach
+            @endforeach
+            @endforeach
+        </marquee>
+    </div>
+</div>

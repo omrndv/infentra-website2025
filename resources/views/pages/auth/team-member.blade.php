@@ -10,7 +10,7 @@
                     <x-auth.progress-bar />
                 </div>
 
-                <div class="card mt-4">
+                <div class="card mt-4 mb-6" style="border: 4px solid #000; box-shadow: 6px 6px 0 0 #000; border-radius: 16px">
                     <div class="row flex-column-reverse flex-md-row">
                         <div class="col-md-12 ps-md-0">
                             <div class="auth-form-wrapper px-4 ps-5 py-5 pe-5">
@@ -42,7 +42,7 @@
                                     @honeypot
 
                                     <x-input.text
-                                        label="Anggota 1"
+                                        label="ANGGOTA 1"
                                         name="data[0][member]"
                                         class="team-member"
                                         placeholder="Nama Lengkap"
@@ -52,7 +52,7 @@
                                         label="Kartu Pelajar/KTM Anggota 1"
                                         accept="image/*" />
                                     <x-input.text
-                                        label="Anggota 2"
+                                        label="ANGGOTA 2"
                                         name="data[1][member]"
                                         class="team-member"
                                         placeholder="Nama Lengkap"
@@ -61,7 +61,7 @@
                                         label="Kartu Pelajar/KTM Anggota 2"
                                         name="data[1][card]"
                                         accept="image/*" />
-                                    <x-button.primary class="w-100 mb-3" type="submit">
+                                    <x-button.primary class="w-100" type="submit">
                                         Lanjutkan ke Pembayaran
                                     </x-button.primary>
                                 </form>

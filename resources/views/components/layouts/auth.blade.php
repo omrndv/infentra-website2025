@@ -67,7 +67,7 @@
     </head>
     <body>
         <div class="main-wrapper" id="app">
-            <div class="page-wrapper full-page">
+            <div class="page-wrapper-auth full-page">
                 @include('sweetalert::alert')
 
                 {{ $slot }}

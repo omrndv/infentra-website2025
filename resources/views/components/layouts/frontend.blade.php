@@ -44,10 +44,37 @@
 
         <style nonce="{{ csp_nonce() }}">
             :root {
-                --primary: {{ $appSettings['primary_color'] }};
-                --primaryHover: {{ $appSettings['primary_color_hover'] }};
-                --secondary: {{$appSettings['secondary_color'] }};
-                --secondaryHover: {{ $appSettings['secondary_color_hover'] }};
+                --primary: {
+                        {
+                        $appSettings['primary_color']
+                    }
+                }
+
+                ;
+
+                --primaryHover: {
+                        {
+                        $appSettings['primary_color_hover']
+                    }
+                }
+
+                ;
+
+                --secondary: {
+                        {
+                        $appSettings['secondary_color']
+                    }
+                }
+
+                ;
+
+                --secondaryHover: {
+                        {
+                        $appSettings['secondary_color_hover']
+                    }
+                }
+
+                ;
             }
         </style>
         <link rel="stylesheet" href="{{ asset('frontend/css/app.css') }}" nonce="{{ csp_nonce() }}" />
