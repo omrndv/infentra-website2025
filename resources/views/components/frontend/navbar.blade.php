@@ -8,7 +8,7 @@
                 alt="Logo"
                 width="60px"
                 height="80px"
-                loading="lazy"/>
+                loading="lazy" />
             <div class="d-flex flex-column align-self-center justify-self-center mx-3">
                 <span class="text-judul" style="font-weight: 800;">
                     {{ $appSettings['title'] }}
@@ -50,7 +50,7 @@
                             </a>
                         </li>
                         @else
-                        @if (request()->is('team/dashboard'))
+                        @if (request()->is('frontend.team.dashboard'))
                         <li>
                             <a class="dropdown-item" href="{{ route('frontend.landing') }}">
                                 <i class="fas fa-home"></i>
@@ -59,7 +59,7 @@
                         </li>
                         @else
                         <li>
-                            <a class="dropdown-item" href="{{ route('team.dashboard') }}">
+                            <a class="dropdown-item" href="{{ route('frontend.team.dashboard') }}">
                                 <i class="fas fa-tachometer-alt"></i>
                                 Dashboard
                             </a>
@@ -79,16 +79,14 @@
                         </li>
                     </ul>
                 </li>
-                                <i class="fas fa-sign-out-alt"></i>
-                                Logout
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                        </li>
-                    </ul>
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
                 </li>
-                @endguest
+            </ul>
+            </li>
+            @endguest
             </ul>
         </div>
     </div>

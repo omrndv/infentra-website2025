@@ -9,9 +9,15 @@
                     {{ $appSettings['description'] }}
                 </p>
                 <br>
+                @auth
+                <a href="{{ route('frontend.team.dashboard') }}" class="btn btn-secondary custom-btn text-white mt-3 mb-3 px-5 me-3">
+                    Register
+                </a>
+                @else
                 <a href="{{ route('register') }}" class="btn btn-secondary custom-btn text-white mt-3 mb-3 px-5 me-3">
                     Register
                 </a>
+                @endauth
                 <button type="button" class="btn btn-outline-light custom-btn mt-3 mb-3 px-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
                     <i class="fas fa-video"></i> Tutorial Pendaftaran
                 </button>

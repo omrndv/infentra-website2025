@@ -17,10 +17,17 @@
 
             <div class="d-flex flex-column flex-sm-row gap-2 w-100">
                 <div class="flex-fill">
+                    @auth
+                    <a href="{{ route('frontend.team.dashboard') }}" class="btn btn-primary fw-semibold rounded-2 w-100">
+                        Daftar Kompetisi
+                    </a>
+                    @else
                     <a href="{{ route('register') }}" class="btn btn-primary fw-semibold rounded-2 w-100">
                         Daftar Kompetisi
                     </a>
+                    @endauth
                 </div>
+
                 <div class="flex-fill">
                     <a href="{{ $competition->poster ?? '#' }}" class="btn btn-outline-secondary fw-semibold rounded-2 w-100" target="_blank">
                         Guidebook

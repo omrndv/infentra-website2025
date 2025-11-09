@@ -10,7 +10,8 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\TeamController as AdminTeamController;
 use App\Http\Controllers\Frontend\ReuploadController;
 use Illuminate\Support\Facades\Auth;
-// URL::forceScheme('https'); // aktifkan kalau pakai HTTPS
+
+//URL::forceScheme('https');
 
 
 Route::prefix('team')->name('frontend.team.')->middleware(['auth', 'role:team'])->group(function () {
