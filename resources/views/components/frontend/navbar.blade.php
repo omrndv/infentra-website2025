@@ -3,14 +3,14 @@
         <a
             class="navbar-brand mx-auto mx-lg-0 d-flex flex-row justify-content-center align-self-center"
             href="{{ route('frontend.landing') }}">
-            <img
+            <!-- <img
                 src="{{ $appSettings['nav_logo'] ?? '#' }}"
                 alt="Logo"
                 width="60px"
                 height="80px"
-                loading="lazy" />
+                loading="lazy" /> -->
             <div class="d-flex flex-column align-self-center justify-self-center mx-3">
-                <span class="text-judul" style="font-weight: 800;">
+                <span class="text-judul" style="font-weight: 800; font-size: 30px; line-height: 0.6; margin-top: 10px; margin-bottom: 5px">
                     {{ $appSettings['title'] }}
                 </span>
                 <small class="text-slogan">
