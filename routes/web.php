@@ -26,7 +26,9 @@ Route::prefix('team')->name('frontend.team.')->middleware(['auth', 'role:team', 
 Route::prefix('verification')->name('verification.')->group(function () {
     Route::get('/', [VerificationController::class, 'index'])->name('index');
     Route::post('/', [VerificationController::class, 'store'])->name('store');
+    Route::post('/resend', [VerificationController::class, 'resend'])->name('resend');
 });
+
 
 
 Route::prefix('password')->name('password.')->group(function () {
