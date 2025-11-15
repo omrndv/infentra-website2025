@@ -1,55 +1,74 @@
-<div id="detail" class="card border-0 card-information">
-    <div class="card-body p-0 bg-secondary rounded-4 custom-stroke-wrapper">
-        <h2 class="text-center px-3 py-5 text-white mb-0 text-uppercase fw-bold">
-            {{ sprintf('Apa itu %s?', $appSettings['title']) }}
-        </h2>
-        <div class="d-flex description justify-content-between align-items-center bg-primary text-white p-4 gap-5">
-            <div class="information p-4">
-                <p class="info-desc text-black">
-                    {{ $appSettings['description'] }}
-                </p>
-                <br>
-                @auth
-                <a href="{{ route('frontend.team.dashboard') }}" class="btn btn-secondary custom-btn text-white mt-3 mb-3 px-5 me-3">
-                    Register
-                </a>
-                @else
-                <a href="{{ route('register') }}" class="btn btn-secondary custom-btn text-white mt-3 mb-3 px-5 me-3">
-                    Register
-                </a>
-                @endauth
-                <button type="button" class="btn btn-outline-light custom-btn mt-3 mb-3 px-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    <i class="fas fa-video"></i> Tutorial Pendaftaran
-                </button>
-            </div>
-            <img src="{{ $appSettings['mascot'] ?? '#' }}" alt="mascot" class="mascot-image" loading="lazy" />
-        </div>
-        <div class="d-flex twibbon justify-content-between align-items-center bg-primary p-4 gap-5 rounded-bottom">
-            <img src="{{ $appSettings['twibbon'] ?? '#' }}" alt="twibbon" class="twibbon-image" loading="lazy" />
-            <div class="information p-4">
-                <h3 class="text-uppercase fw-bold">
-                    {{ sprintf('Twibbon %s', $appSettings['title']) }}
-                </h3>
-                <p class="info-desc mb-5">
-                    Hello Developer Muda, Mari kita berpartisipasi dengan menggunakan Twibon dari kami dengan cara <b>unduh Twibon dibawah</b> ini dan posting di media sosial beserta caption yang sudah disediakan. Jangan lupa <b>tag kami!</b>
-                </p>
-                <div class="d-flex gap-4">
-                    <a href="{{ $appSettings['twibbon_link'] ?? '#' }}" class="btn btn-sm btn-rounded border border-1 text-black">
-                        Unduh Twibbon
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<div class="container-fluid p-0" style="background-color: #f7f7f7;">
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-body">
-                <button type="button" class="btn-close float-end mb-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                <iframe width="100%" height="500px" loading="lazy" src="{{ $appSettings['video_tutorial'] ?? '#' }}" title="Video tutorial pendaftaran {{ $appSettings['title'] ?? '#' }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-            </div>
+    <div class="row m-0 py-3 px-3" style="background-color: #FFB049; color: white; border: 2px solid #000; border-bottom: none;">
+        <div class="col-12">
+            <h1 class="fw-bold text-center text-md-start" style="font-size: 2rem;">
+                {{ sprintf('APA ITU %s?', $appSettings['title']) }}
+            </h1>
         </div>
     </div>
+
+    <div class="py-3 px-3" style="border: 2px solid #000; background-color: #FCEFDE;">
+        <p style="font-size: 1rem; line-height: 1.6; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0;">
+            {{ $appSettings['description'] }}.
+        </p>
+    </div>
+
+    <x-frontend.timeline />
+
+    <hr style="border: 0; border-top: 2px solid #000; margin: 0;">
+
+    <div class="row py-5" style="background-color: white;">
+        <div class="col-12 text-center pt-5">
+            <h2 class="fw-bold" style="font-size: 2rem; color:#333;">TUJUAN & MANFAAT</h2>
+            <p style="font-weight:300;font-size:1rem;font-family: 'Plus Jakarta Sans', sans-serif;">
+                MENUMBUHKAN SEMANGAT KOLABORASI, INOVASI, <br> DAN PRESTASI MAHASISWA INDONESIA
+            </p>
+        </div>
+
+        <div class="col-12">
+
+            <div class="row g-0" style="border: 1px solid #000; font-family: 'Plus Jakarta Sans', sans-serif;">
+
+                <div class="col-12 col-md-6" style="border: 1px solid #000;">
+                    <div style="background-color:#FCEFDE;color:black;padding:25px;">
+                        <p class="mb-0" style="font-weight:500;font-size:1rem;">
+                            <span style="font-size:1.5rem;margin-right:10px;">&#9733;</span>
+                            Menjadi wadah pengembangan minat dan bakat mahasiswa/pelajar.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6" style="border: 1px solid #000;">
+                    <div style="background-color:#FFB049;color:white;padding:25px;">
+                        <p class="mb-0" style="font-weight:500;font-size:1rem;">
+                            <span style="font-size:1.5rem;margin-right:10px;">&#129309;</span>
+                            Mendorong inovasi, kebersamaan, dan sportivitas.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6" style="border: 1px solid #000;">
+                    <div style="background-color:#FFB049;color:white;padding:25px;">
+                        <p class="mb-0" style="font-weight:500;font-size:1rem;">
+                            <span style="font-size:1.5rem;margin-right:10px;">&#9889;</span>
+                            Menumbuhkan jejaring dan kolaborasi nasional.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6" style="border: 1px solid #000;">
+                    <div style="background-color:#FCEFDE;color:black;padding:25px;">
+                        <p class="mb-0" style="font-weight:500;font-size:1rem;">
+                            <span style="font-size:1.5rem;margin-right:10px;">&#10145;</span>
+                            Memberi dampak edukatif dan apresiasi prestasi peserta.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
 </div>
